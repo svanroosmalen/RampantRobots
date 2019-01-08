@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace RampantRobots
 {
-    class Robot
-    {
-        public int xpositie { get; set; }
-        public int ypositie { get; set; }
+    //class Robot
+    //{
+    //    public int xpositie { get; set; }
+    //    public int ypositie { get; set; }
 
-        public Robot(int Xposition, int Yposition)
-        {
-            xpositie = Xposition;
-            ypositie = Yposition;
-        }
-    }
+    //    public Robot(int Xposition, int Yposition)
+    //    {
+    //        xpositie = Xposition;
+    //        ypositie = Yposition;
+    //    }
+    //}
 }
