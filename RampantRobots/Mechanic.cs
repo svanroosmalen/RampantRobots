@@ -18,29 +18,27 @@ namespace RampantRobots
         }
 
     }
-    public void Move(GameObject Simone)
-    {
-        string input = Console.ReadLine();
-        for (int ii = 0; ii <= input.Length; ii++)
-        {
-            if (input[ii] == 'a')
-                Simone.xpositie--;
-            else if (input[ii] == 'w')
-                Simone.ypositie--;
-            else if (input[ii] == 's')
-                Simone.ypositie++;
-            else if (input[ii] == 'd')
-                Simone.xpositie++;
-            else
-                Console.WriteLine("tik a, w, s of d in");
-        }
-    }
-    class Mechanic : GameObject
+   
+     class Mechanic : GameObject
     {
         public Mechanic(int Xposition, int Yposition) : base(Xposition, Yposition)
         {
         }
+        public void Move(char direction)
+        {
+            if (direction == 'a')
+                xpositie--;
+            else if (direction == 'w')
+                ypositie--;
+            else if (direction == 'd')
+                ypositie++;
+            else if (direction == 's')
+                xpositie++;
+            else
+                throw new ArgumentException("Invalid driection!");
+        }
 
+           
     }
     class Robot: GameObject
     {
