@@ -12,23 +12,18 @@ namespace RampantRobots
         public int Height { get; set; }
         public int Width { get; set; }
         public int Turns { get; set; }
+        public int AantalRobots { get; set; }
+        //Maak een mechanic aan genaamd Simone
         Mechanic Simone = new Mechanic(1, 1);
-        Robot rob = new Robot(2, 2);
         public List<Robot> robots;      // lijst met robots, zodat je robots kan toevoegen en verwijderen.
 
-
-        // width = 4;      //breedte van de fabriek
-        // height = 4;     //hoogte van de fabriek
-        // robots = 2;     //Aantal robots op het begin
-        // turns = 5;      // Maximale aantal turns
-        // robotsMove = false; // Robots kunnen niet bewegen
-
         // fabriek aanmaken en lijst met robots vullen
-        public Factory(int width, int height, int aantalRobots, int turns, bool robotsMove)
+        public Factory(int width, int height, int aantalRobots, int turns)
         {   //fabriek aanmaken
             Height = height;
             Width = width;
             Turns = turns;
+            AantalRobots = aantalRobots;
             Simone = new Mechanic(1, 1);
             //nieuwe robot aanmaken
             robots = new List<Robot>();
@@ -42,12 +37,11 @@ namespace RampantRobots
 
             }
         }
-
+        //Print de fabriek
         public void PrintFactory()
         {
             StringBuilder sb = new StringBuilder();
-            string[,] matrix = new string[Width, Height];
-
+            //alle punten afgaan in de fabriek en daar een . R of M neer zetten
             for (int ii = 1; ii <= Height; ii++)
             {
                 for (int jj = 1; jj <= Width; jj++)
@@ -67,13 +61,14 @@ namespace RampantRobots
                     }
 
                 }
+
                 sb.Append(Environment.NewLine);
             }
 
             Console.WriteLine(sb.ToString());
         }
 
-        
+        //Staat er een robot of Mechanic
         public GameObject GetObjectByPosition(int i, int j)
         {
             if (Simone.xpositie == i & Simone.ypositie == j)
@@ -93,15 +88,37 @@ namespace RampantRobots
         // 1 ronde en als je verloren hebt een nieuw spel
         public void Ronde(int turns, bool win)
         {
-            //Console.WriteLine("Druk op enter om verder te gaan" +
-            //    "");
             PrintFactory();
             Console.Write("Geef de stappen: ");
             string input = Console.ReadLine();
+            //Ga iedere zet af of er robots op een mechanic staan, of een robot op een robot staat, mechanic 
+            //in de fabriek houden en checken op dode robots
             foreach (char direction in input)
             {
+                List<Robot> toRemove = new List<Robot>();
+                foreach(Robot robot in robots)
+                {
+                    List<int> newPosition = robot.Robotmoves(Width, Height);
+                    GameObject objectOnNewPosition = GetObjectByPosition(newPosition[0], newPosition[1]);
+                    if(objectOnNewPosition is Mechanic)
+                    {
+                        // robot verwijderen
+                        toRemove.Add(robot);
+                    }
+                    else if(!(objectOnNewPosition is Robot))
+                    {
+                        
+                        robot.xpositie = newPosition[0];
+                        robot.ypositie = newPosition[1];
+                    }
+                }
+                foreach(Robot robot in toRemove)
+                {
+                    robots.Remove(robot);
+                }
                 Simone.Move(direction);
                 // Zorgen dat Mechanic in de fabriek blijft
+                //Als mechanic uit de fabriek loopt, blijft die op dezelfde plek staan. 
                 if (Simone.ypositie < 1)
                     Simone.ypositie = 1;
                 else if (Simone.xpositie < 1)
@@ -110,34 +127,32 @@ namespace RampantRobots
                     Simone.ypositie = Height;
                 else if (Simone.xpositie > Width)
                     Simone.xpositie = Width;
-                // checken op dooie robots
+                // checken op dode robots
                 for (int ii = robots.Count - 1; ii >= 0; ii--)
                 {
                     if (Simone.xpositie == robots[ii].xpositie & Simone.ypositie == robots[ii].ypositie)
                         robots.RemoveAt(ii);
                 }
-                PrintFactory();
-                // checken of robot uit veld loopt
-                // Don't let simone go out of bounds
-                
+
+                 
             }
 
-            Console.WriteLine(String.Format("You've got {0} turns left.", turns-1));
-
+            Console.WriteLine(String.Format("You've got {0} turns left.", turns));
+            //als je geen rondes meer over hebt, heb je verloren
             if (turns == 0)
             {
                 Console.Clear();
                 Console.WriteLine("Verloren");
-                Start_newgame(win, turns);
+                start_nieuwspel(win, turns,Width, Height,AantalRobots);
             }
 
-            win = WinCheck(win, turns);
-            Start_newgame(win, turns);
+            win = win_je(win, turns);
+            start_nieuwspel(win, turns, Width, Height, AantalRobots);
         }
         //Run de ronde meerdere malen.
-        public void Run()
+        public void Run(int turns)
         {
-//            Console.Clear();
+            Turns = turns;
             Console.WriteLine("Hallo! Leuk dat je meespeelt met Rampant Robot\n" +
             "Je kunt meespelen met de toetsen awsd.");
             bool win = false;
@@ -146,11 +161,9 @@ namespace RampantRobots
             {
                 Ronde(ii, win);
             }
-
-            //Console.ReadLine();
         }
-
-        public bool WinCheck(bool win, int turns)
+        //checken of je gewonnen hebt
+        public bool win_je(bool win, int turns)
         
             {
             if (robots.Count == 0)
@@ -163,32 +176,30 @@ namespace RampantRobots
 
             return win;
         }
-        public void Start_newgame(bool win, int turns)
+        //checken of je nieuw spel wilt starten en zoja start hem
+        public void start_nieuwspel(bool win, int turns, int xlength,int ylength, int aantalrobots)
         {
-            if (win == true | turns == 0)
+            if (win == true || turns == 0)
             {
-                Console.WriteLine("Do you want to play again? (y/n)");
-                string newgame = Console.ReadLine();
+                Console.WriteLine("Wil je nog een keer spelen? (y/n)");
+                string spel = Console.ReadLine();
 
-                if (newgame == "y")
+                if (spel == "y")
                 {
                     Console.WriteLine("Succes met het volgende potje :)");
-                    Factory fabriek = new Factory(5, 5, 3, 5, false);
-                    fabriek.Run();
+                    Factory fabriek = new Factory(xlength, ylength, aantalrobots, Turns);
+                    fabriek.Run(Turns);
                 }
-                else if (newgame == "n")
+                else if (spel == "n")
                 {
                     Console.WriteLine("Ha! durf je niet meer?!");
+                    Console.WriteLine("Druk nog een keer op Enter als je af wilt sluiten");
                     Console.ReadLine();
                     Environment.Exit(1);
                 }
             }
         }
-
-
     }
-
-
 }
 
         
