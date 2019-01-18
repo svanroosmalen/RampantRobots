@@ -12,7 +12,7 @@ namespace RampantRobots
         {
             //Fabriek aanmaken en runnen.
             //fabriek(xlengte, ylengte, aantal robots, aantal turns)
-            int turns = 3;
+            int turns = 10;
             int xlength = 5;
             int ylength = 5;
             int aantal_robots = 3;

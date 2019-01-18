@@ -85,7 +85,7 @@ namespace RampantRobots
             return null;
         }
 
-        // 1 ronde en als je verloren hebt een nieuw spel
+        // 1 ronde en verloren spel afsluiten
         public void Ronde(int turns, bool win)
         {
             PrintFactory();
@@ -143,11 +143,9 @@ namespace RampantRobots
             {
                 Console.Clear();
                 Console.WriteLine("Verloren");
-                start_nieuwspel(win, turns,Width, Height,AantalRobots);
             }
 
             win = win_je(win, turns);
-            start_nieuwspel(win, turns, Width, Height, AantalRobots);
         }
         //Run de ronde meerdere malen.
         public void Run(int turns)
@@ -172,33 +170,15 @@ namespace RampantRobots
                 Console.WriteLine("Gefeliciteerd, je hebt het spel uitgespeeld");
                 Console.WriteLine("You've had {0} turns left.", turns);
                 win = true;
+                Console.WriteLine("Druk nog een keer op Enter als je af wilt sluiten");
+                Console.ReadLine();
+                Environment.Exit(1);
+
             }
 
             return win;
         }
-        //checken of je nieuw spel wilt starten en zoja start hem
-        public void start_nieuwspel(bool win, int turns, int xlength,int ylength, int aantalrobots)
-        {
-            if (win == true || turns == 0)
-            {
-                Console.WriteLine("Wil je nog een keer spelen? (y/n)");
-                string spel = Console.ReadLine();
 
-                if (spel == "y")
-                {
-                    Console.WriteLine("Succes met het volgende potje :)");
-                    Factory fabriek = new Factory(xlength, ylength, aantalrobots, Turns);
-                    fabriek.Run(Turns);
-                }
-                else if (spel == "n")
-                {
-                    Console.WriteLine("Ha! durf je niet meer?!");
-                    Console.WriteLine("Druk nog een keer op Enter als je af wilt sluiten");
-                    Console.ReadLine();
-                    Environment.Exit(1);
-                }
-            }
-        }
     }
 }
 
